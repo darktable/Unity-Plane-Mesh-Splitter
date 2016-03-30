@@ -1,5 +1,7 @@
 # Unity Plane Mesh Splitter
-A simple script which enables you to split a 2D mesh into chunks. Designed to work well with Tiled2Unity, but should work with any kind of 2D mesh. Also my very first public project ever.
+A simple script which let's you to split a large mesh into chunks. Designed to work well with imported Tiled2Unity terrains, but should work with any kind of mesh. Also my very first public project ever.
+
+![alt tag](http://i.imgur.com/yVVHnP9.png)
 
 # Installation
 Put MeshSplit.cs and the Editor folder in the Assets folder in your Unity project.
@@ -9,7 +11,4 @@ Put the "Mesh Split" component on the game object you want to split and hit the 
 
 Requirements:
 - Mesh Filter component
-- A mesh which only uses 2 axes:
-  - x, y
-  - x, z
 - Mesh Renderer component (optional)
