@@ -1,5 +1,5 @@
 # Unity Plane Mesh Splitter
-A simple script which let's you to split a large mesh into chunks. Designed to work well with imported Tiled2Unity terrains, but should work with any kind of mesh. Also my very first public project ever.
+A simple script which let's you split a large mesh into chunks. Designed to work well with imported Tiled2Unity terrains, but should work with any kind of mesh. Also my very first public project ever.
 
 ![alt tag](http://i.imgur.com/yVVHnP9.png)
 
