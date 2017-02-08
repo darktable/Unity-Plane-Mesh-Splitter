@@ -230,7 +230,7 @@ public class MeshSplit : MonoBehaviour
         m.triangles = tris.ToArray();
         m.uv = uvs.ToArray();
 
-        m.Optimize();
+        UnityEditor.MeshUtility.Optimize(m);
         m.RecalculateNormals();
 
         // assign the new mesh to submeshes mesh filter
