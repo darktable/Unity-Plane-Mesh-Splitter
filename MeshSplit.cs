@@ -1,7 +1,4 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
-
-/*  
+﻿/*  
 
     Made by Artur Nasiadko
     https://github.com/artnas
@@ -13,8 +10,13 @@ using System.Collections.Generic;
 
 */
 
+using UnityEngine;
+using System.Collections.Generic;
+
 public class MeshSplit : MonoBehaviour
 {
+
+    private readonly bool drawGrid = true;
 
     public enum Axis
     {
@@ -29,8 +31,8 @@ public class MeshSplit : MonoBehaviour
 
     // Size can be much higher than 64, but that would completly defeat the point of this script
 
-    [Range(2, 64)]
-    public int size = 16;
+    [Range(1, 64)]
+    public int gridSize = 16;
 
     public Axis secondaryAxis = Axis.y;
 
@@ -38,6 +40,7 @@ public class MeshSplit : MonoBehaviour
     public string renderLayerName = "Default";
 
     public bool useSortingLayerFromThisMesh = true;
+    public bool useStaticSettingsFromThisMesh = true;
 
     private Vector3[] baseVerticles;
     private int[] baseTriangles;
@@ -51,13 +54,7 @@ public class MeshSplit : MonoBehaviour
     public void Split()
     {
 
-        for (int i = 0; i < childen.Count; i++)
-        {
-
-            DestroyImmediate(childen[i]);
-
-        }
-        childen.Clear();
+        DestroyChildren();
 
         if (GetComponent<MeshFilter>() == null)
         {
@@ -69,37 +66,37 @@ public class MeshSplit : MonoBehaviour
 
         baseRenderer = GetComponent<MeshRenderer>();
         if (baseRenderer)
-        baseRenderer.enabled = false;
+            baseRenderer.enabled = false;
 
         baseVerticles = baseMesh.vertices;
         baseTriangles = baseMesh.triangles;
         baseUvs = baseMesh.uv;
 
-        int boundsHeightMin; 
+        int boundsHeightMin;
         if (secondaryAxis == Axis.y)
-            boundsHeightMin = (int)baseMesh.bounds.min.y;
+            boundsHeightMin = Mathf.CeilToInt(baseMesh.bounds.min.y);
         else
-            boundsHeightMin = (int)baseMesh.bounds.min.z;
+            boundsHeightMin = Mathf.CeilToInt(baseMesh.bounds.min.z);
 
         int boundsHeightMax;
         if (secondaryAxis == Axis.y)
-            boundsHeightMax = (int)baseMesh.bounds.max.y;
+            boundsHeightMax = Mathf.CeilToInt(baseMesh.bounds.max.y);
         else
-            boundsHeightMax = (int)baseMesh.bounds.max.z;
+            boundsHeightMax = Mathf.CeilToInt(baseMesh.bounds.max.z);
 
-        for (int y = boundsHeightMin; y <= boundsHeightMax + size; y += size)
+        for (int y = boundsHeightMin - gridSize; y <= boundsHeightMax + gridSize; y += gridSize)
         {
 
-            for (int x = (int)baseMesh.bounds.min.x; x <= (int)baseMesh.bounds.max.x + size; x += size)
+            for (int x = (int)baseMesh.bounds.min.x - gridSize; x <= (int)baseMesh.bounds.max.x + gridSize; x += gridSize)
             {
 
                 if (secondaryAxis == Axis.y)
                 {
-                    CreateMesh(new Vector3(x + size/2, y + size/2));
+                    CreateMesh(new Vector3(x + gridSize / 2, y + gridSize / 2));
                 }
                 else
                 {
-                    CreateMesh(new Vector3(x + size/2, 0, y + size/2));
+                    CreateMesh(new Vector3(x + gridSize / 2, 0, y + gridSize / 2));
                 }
 
             }
@@ -108,7 +105,7 @@ public class MeshSplit : MonoBehaviour
 
     }
 
-    public void Clear()
+    private void DestroyChildren()
     {
 
         for (int i = 0; i < childen.Count; i++)
@@ -120,25 +117,21 @@ public class MeshSplit : MonoBehaviour
 
         childen.Clear();
 
+    }
+
+    public void Clear()
+    {
+
+        DestroyChildren();
+
         GetComponent<MeshRenderer>().enabled = true;
 
     }
 
-    public double Distance(Vector3 a, Vector3 b)
-    {
-
-        float xd = a.x - b.x;
-        float yd;
-        
-        if (secondaryAxis == Axis.y)
-            yd = a.y - b.y;
-        else
-            yd = a.z - b.z;
-
-        return Mathf.Max(Mathf.Abs(xd), Mathf.Abs(yd));
-
-    }
-
+    /// <summary>
+    /// Creates a new mesh from verts/tris/uvs which are close (manhattan distance) to the given pivot 
+    /// </summary>
+    /// <param name="pivot"></param>
     public void CreateMesh(Vector3 pivot)
     {
 
@@ -148,6 +141,7 @@ public class MeshSplit : MonoBehaviour
         newObject.name = "SubMesh " + pivot;
         newObject.transform.SetParent(transform);
         newObject.transform.localPosition = Vector3.zero;
+        newObject.transform.localScale = Vector3.one;
         newObject.AddComponent<MeshFilter>();
         newObject.AddComponent<MeshRenderer>();
 
@@ -183,10 +177,12 @@ public class MeshSplit : MonoBehaviour
             Vector3 currentPoint =
                 (baseVerticles[baseTriangles[i]] +
                  baseVerticles[baseTriangles[i + 1]] +
-                 baseVerticles[baseTriangles[i + 2]])/3;
-                    
-            double dist = Distance(currentPoint, pivot);
-            if (dist > (float)size / 2) continue;
+                 baseVerticles[baseTriangles[i + 2]]) / 3;
+
+            // calculate distance from pivot
+
+            double dist = ManhattanDistance(currentPoint, pivot);
+            if (dist > (float)gridSize / 2) continue;
 
             // Do the things
 
@@ -238,7 +234,60 @@ public class MeshSplit : MonoBehaviour
         MeshFilter newMeshFilter = newObject.GetComponent<MeshFilter>();
         newMeshFilter.mesh = m;
 
-        newObject.isStatic = true;
+        if (useStaticSettingsFromThisMesh)
+            newObject.isStatic = gameObject.isStatic;
+
+    }
+
+    public float ManhattanDistance(Vector3 a, Vector3 b)
+    {
+
+        float xd = a.x - b.x;
+        float yd;
+
+        if (secondaryAxis == Axis.y)
+            yd = a.y - b.y;
+        else
+            yd = a.z - b.z;
+
+        return Mathf.Max(Mathf.Abs(xd), Mathf.Abs(yd));
+
+    }
+
+    void OnDrawGizmosSelected()
+    {
+
+        MeshFilter meshFilter = GetComponent<MeshFilter>();
+
+        if (drawGrid && meshFilter && meshFilter.sharedMesh)
+        {
+
+            Bounds b = meshFilter.sharedMesh.bounds;
+
+            int xSize = Mathf.CeilToInt(b.extents.x) + gridSize;
+            int ySize = Mathf.CeilToInt(b.extents.y) + gridSize;
+            int zSize = Mathf.CeilToInt(b.extents.z) + gridSize;
+
+            for (int z = -zSize; z < zSize; z+= gridSize)
+            {
+
+                for (int y = -ySize; y < ySize; y+= gridSize)
+                {
+                    
+                    for (int x = -xSize; x < xSize; x+= gridSize)
+                    {
+
+                        Vector3 position = transform.position + new Vector3(x, y, z);
+
+                        Gizmos.DrawWireCube(position, gridSize*transform.localScale);
+
+                    }
+
+                }
+
+            }
+
+        }
 
     }
 
