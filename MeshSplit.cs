@@ -5,8 +5,6 @@
 
     1. Add this thing to the plane you want to split
     2. Press the Split button
-    3. ???
-    4. Profit
 
 */
 
@@ -16,6 +14,8 @@ using System.Collections.Generic;
 public class MeshSplit : MonoBehaviour
 {
 
+    // a struct which will act as a key in our dictionary.
+    // a Vector3 could probably be used instead, but I wanted to use ints
     public struct GridCoordinates
     {
 
@@ -48,16 +48,16 @@ public class MeshSplit : MonoBehaviour
 
     }
 
-    private readonly bool drawGrid = true;
+    // draw debug grid when the object is selected
+    private readonly bool drawGrid = false;
 
     private Mesh baseMesh;
     private MeshRenderer baseRenderer;
 
-    // Size can be much higher than 64, but that would completly defeat the point of this script
-
     [Range(0.1f, 64)]
     public float gridSize = 16;
 
+    // which axes should the script use?
     public bool axisX = true;
     public bool axisY = true;
     public bool axisZ = true;
@@ -68,33 +68,43 @@ public class MeshSplit : MonoBehaviour
     public bool useSortingLayerFromThisMesh = true;
     public bool useStaticSettingsFromThisMesh = true;
 
+    // mesh data from this objects mesh filter
     private Vector3[] baseVerticles;
     private int[] baseTriangles;
     private Vector2[] baseUvs;
+    private Vector3[] baseNormals;
 
+    // this dictionary holds a list of triangle indices for every grid node
     private Dictionary<GridCoordinates, List<int>> triDictionary;
 
     // generated children are kept here, so the script knows what to delete on Split() or Clear()
-
     [HideInInspector]
     public List<GameObject> childen = new List<GameObject>();
 
     private void MapTrianglesToGridNodes()
     {
 
+        /* Create a list of triangle indices from our mesh for every grid node */
+
         triDictionary = new Dictionary<GridCoordinates, List<int>>();
 
         for (int i = 0; i < baseTriangles.Length; i += 3)
         {
+
+            // middle of the current triangle (average of its 3 verts).
 
             Vector3 currentPoint =
                 (baseVerticles[baseTriangles[i]] +
                  baseVerticles[baseTriangles[i + 1]] +
                  baseVerticles[baseTriangles[i + 2]]) / 3;
 
+            // calculate coordinates of the closest grid node.
+
             currentPoint.x = Mathf.Round(currentPoint.x / gridSize) * gridSize;
             currentPoint.y = Mathf.Round(currentPoint.y / gridSize) * gridSize;
             currentPoint.z = Mathf.Round(currentPoint.z / gridSize) * gridSize;
+
+            // ignore an axis if its not enabled
 
             GridCoordinates gridPos = new GridCoordinates(
                 axisX ? currentPoint.x : 0,
@@ -102,10 +112,14 @@ public class MeshSplit : MonoBehaviour
                 axisZ ? currentPoint.z : 0
                 );
 
+            // check if the dictionary has a key (our grid position). Add it / create a list for it if it doesnt.
+
             if (!triDictionary.ContainsKey(gridPos))
             {
                 triDictionary.Add(gridPos, new List<int>());
             }
+
+            // add these triangle indices to the list
 
             triDictionary[gridPos].Add(baseTriangles[i]);
             triDictionary[gridPos].Add(baseTriangles[i + 1]);
@@ -135,188 +149,30 @@ public class MeshSplit : MonoBehaviour
 
         baseRenderer = GetComponent<MeshRenderer>();
         if (baseRenderer)
+        {
             baseRenderer.enabled = false;
+        }
 
         baseVerticles = baseMesh.vertices;
         baseTriangles = baseMesh.triangles;
         baseUvs = baseMesh.uv;
+        baseNormals = baseMesh.normals;
 
+        // create a list of triangle indices for every grid node
         MapTrianglesToGridNodes();
 
+        // create a submesh for each list of triangle indices
         foreach (var item in triDictionary.Keys)
         {
             CreateMesh(item, triDictionary[item]);
         }
 
-        //int boundsHeightMin;
-        //if (secondaryAxis == Axis.y)
-        //    boundsHeightMin = Mathf.CeilToInt(baseMesh.bounds.min.y);
-        //else
-        //    boundsHeightMin = Mathf.CeilToInt(baseMesh.bounds.min.z);
-
-        //int boundsHeightMax;
-        //if (secondaryAxis == Axis.y)
-        //    boundsHeightMax = Mathf.CeilToInt(baseMesh.bounds.max.y);
-        //else
-        //    boundsHeightMax = Mathf.CeilToInt(baseMesh.bounds.max.z);
-
-        //for (float y = boundsHeightMin - gridSize; y <= boundsHeightMax + gridSize; y += gridSize)
-        //{
-
-        //    for (float x = (int)baseMesh.bounds.min.x - gridSize; x <= (int)baseMesh.bounds.max.x + gridSize; x += gridSize)
-        //    {
-
-        //        if (secondaryAxis == Axis.y)
-        //        {
-        //            CreateMesh(new Vector3(x + gridSize / 2, y + gridSize / 2));
-        //        }
-        //        else
-        //        {
-        //            CreateMesh(new Vector3(x + gridSize / 2, 0, y + gridSize / 2));
-        //        }
-
-        //    }
-
-        //}
-
     }
-
-    private void DestroyChildren()
-    {
-
-        for (int i = 0; i < childen.Count; i++)
-        {
-
-            DestroyImmediate(childen[i]);
-
-        }
-
-        childen.Clear();
-
-    }
-
-    public void Clear()
-    {
-
-        DestroyChildren();
-
-        GetComponent<MeshRenderer>().enabled = true;
-
-    }
-
-    ///// <summary>
-    ///// Creates a new mesh from verts/tris/uvs which are close (manhattan distance) to the given pivot 
-    ///// </summary>
-    ///// <param name="pivot"></param>
-    //public void CreateMesh(Vector3 pivot)
-    //{
-
-    //    // create a new game object
-
-    //    GameObject newObject = new GameObject();
-    //    newObject.name = "SubMesh " + pivot;
-    //    newObject.transform.SetParent(transform);
-    //    newObject.transform.localPosition = Vector3.zero;
-    //    newObject.transform.localScale = Vector3.one;
-    //    newObject.AddComponent<MeshFilter>();
-    //    newObject.AddComponent<MeshRenderer>();
-
-    //    MeshRenderer newRenderer = newObject.GetComponent<MeshRenderer>();
-    //    newRenderer.sharedMaterial = GetComponent<MeshRenderer>().sharedMaterial;
-
-    //    // sorting order and layer name of the generated mesh renderer
-
-    //    if (!useSortingLayerFromThisMesh)
-    //    {
-    //        newRenderer.sortingLayerName = renderLayerName;
-    //        newRenderer.sortingOrder = renderLayerIndex;
-    //    }
-    //    else if (baseRenderer)
-    //    {
-    //        newRenderer.sortingLayerName = baseRenderer.sortingLayerName;
-    //        newRenderer.sortingOrder = baseRenderer.sortingOrder;
-    //    }
-
-    //    List<Vector3> verts = new List<Vector3>();
-    //    List<int> tris = new List<int>();
-    //    List<Vector2> uvs = new List<Vector2>();
-
-    //    int actualIndex = 0;
-
-    //    bool isEmpty = true;
-
-    //    for (int i = 0; i < baseTriangles.Length; i += 3)
-    //    {
-
-    //        // get the middle position of current triangle (average of its 3 verts)
-
-    //        Vector3 currentPoint =
-    //            (baseVerticles[baseTriangles[i]] +
-    //             baseVerticles[baseTriangles[i + 1]] +
-    //             baseVerticles[baseTriangles[i + 2]]) / 3;
-
-    //        // calculate distance from pivot
-
-    //        float dist = ManhattanDistance(currentPoint, pivot);
-    //        if (dist > gridSize / 2) continue;
-
-    //        // Do the things
-
-    //        verts.Add(baseVerticles[baseTriangles[i]]);
-    //        verts.Add(baseVerticles[baseTriangles[i + 1]]);
-    //        verts.Add(baseVerticles[baseTriangles[i + 2]]);
-
-    //        tris.Add(actualIndex++);
-    //        tris.Add(actualIndex++);
-    //        tris.Add(actualIndex++);
-
-    //        uvs.Add(baseUvs[baseTriangles[i]]);
-    //        uvs.Add(baseUvs[baseTriangles[i + 1]]);
-    //        uvs.Add(baseUvs[baseTriangles[i + 2]]);
-
-    //        isEmpty = false;
-
-    //    }
-
-    //    // Return if the mesh is empty
-
-    //    if (isEmpty)
-    //    {
-    //        DestroyImmediate(newObject);
-    //        return;
-    //    }
-
-    //    // add the new object to children
-
-    //    childen.Add(newObject);
-
-    //    // Create a new mesh
-
-    //    Mesh m = new Mesh();
-
-    //    m.name = pivot.ToString();
-
-    //    m.vertices = verts.ToArray();
-    //    m.triangles = tris.ToArray();
-    //    m.uv = uvs.ToArray();
-
-    //    UnityEditor.MeshUtility.Optimize(m);
-    //    m.RecalculateNormals();
-
-    //    // assign the new mesh to submeshes mesh filter
-
-    //    MeshFilter newMeshFilter = newObject.GetComponent<MeshFilter>();
-    //    newMeshFilter.mesh = m;
-
-    //    if (useStaticSettingsFromThisMesh)
-    //        newObject.isStatic = gameObject.isStatic;
-
-    //}
 
     public void CreateMesh(GridCoordinates gridCoordinates, List<int> dictionaryTriangles)
     {
 
-        // create a new game object
+        // create a new game object ...
 
         GameObject newObject = new GameObject();
         newObject.name = "SubMesh " + gridCoordinates;
@@ -343,9 +199,19 @@ public class MeshSplit : MonoBehaviour
             newRenderer.sortingOrder = baseRenderer.sortingOrder;
         }
 
+        // should the submesh also be static if the base object is static?
+
+        if (useStaticSettingsFromThisMesh)
+            newObject.isStatic = gameObject.isStatic;
+
+        // mesh data lists for the new mesh
+
         List<Vector3> verts = new List<Vector3>();
         List<int> tris = new List<int>();
         List<Vector2> uvs = new List<Vector2>();
+        List<Vector3> normals = new List<Vector3>();
+
+        // these lists are filled in this loop
 
         for (int i = 0; i < dictionaryTriangles.Count; i += 3)
         {
@@ -362,77 +228,31 @@ public class MeshSplit : MonoBehaviour
             uvs.Add(baseUvs[dictionaryTriangles[i + 1]]);
             uvs.Add(baseUvs[dictionaryTriangles[i + 2]]);
 
+            normals.Add(baseNormals[dictionaryTriangles[i]]);
+            normals.Add(baseNormals[dictionaryTriangles[i + 1]]);
+            normals.Add(baseNormals[dictionaryTriangles[i + 2]]);
+
         }
 
-        //int actualIndex = 0;
-
-        //bool isEmpty = true;
-
-        //for (int i = 0; i < baseTriangles.Length; i += 3)
-        //{
-
-        //    // get the middle position of current triangle (average of its 3 verts)
-
-        //    Vector3 currentPoint =
-        //        (baseVerticles[baseTriangles[i]] +
-        //         baseVerticles[baseTriangles[i + 1]] +
-        //         baseVerticles[baseTriangles[i + 2]]) / 3;
-
-        //    // calculate distance from pivot
-
-        //    float dist = ManhattanDistance(currentPoint, gridCoordinates);
-        //    if (dist > gridSize / 2) continue;
-
-        //    // Do the things
-
-        //    verts.Add(baseVerticles[baseTriangles[i]]);
-        //    verts.Add(baseVerticles[baseTriangles[i + 1]]);
-        //    verts.Add(baseVerticles[baseTriangles[i + 2]]);
-
-        //    tris.Add(actualIndex++);
-        //    tris.Add(actualIndex++);
-        //    tris.Add(actualIndex++);
-
-        //    uvs.Add(baseUvs[baseTriangles[i]]);
-        //    uvs.Add(baseUvs[baseTriangles[i + 1]]);
-        //    uvs.Add(baseUvs[baseTriangles[i + 2]]);
-
-        //    isEmpty = false;
-
-        //}
-
-        // Return if the mesh is empty
-
-        //if (isEmpty)
-        //{
-        //    DestroyImmediate(newObject);
-        //    return;
-        //}
-
-        // add the new object to children
-
+        // add the newly created object to the list of children (submeshes)
         childen.Add(newObject);
 
-        // Create a new mesh
-
+        // Create a new mesh ...
         Mesh m = new Mesh();
-
         m.name = gridCoordinates.ToString();
 
+        // fill it with data from our lists ...
         m.vertices = verts.ToArray();
         m.triangles = tris.ToArray();
         m.uv = uvs.ToArray();
+        m.normals = normals.ToArray();
 
         UnityEditor.MeshUtility.Optimize(m);
-        m.RecalculateNormals();
-
-        // assign the new mesh to submeshes mesh filter
+    
+        // assign the new mesh to this submeshes mesh filter
 
         MeshFilter newMeshFilter = newObject.GetComponent<MeshFilter>();
         newMeshFilter.mesh = m;
-
-        if (useStaticSettingsFromThisMesh)
-            newObject.isStatic = gameObject.isStatic;
 
     }
 
@@ -443,19 +263,26 @@ public class MeshSplit : MonoBehaviour
 
     }
 
-    public float ManhattanDistance(Vector3 a, Vector3 b)
+    public void Clear()
     {
 
-        float xd = 0;
-        if (axisX) xd = a.x - b.x;
+        DestroyChildren();
 
-        float yd = 0;
-        if (axisY) yd = a.y - b.y;
+        GetComponent<MeshRenderer>().enabled = true;
 
-        float zd = 0;
-        if (axisZ) zd = a.z - b.z;
+    }
 
-        return Mathf.Max(Mathf.Abs(xd), Mathf.Abs(yd), Mathf.Abs(zd));
+    private void DestroyChildren()
+    {
+
+        for (int i = 0; i < childen.Count; i++)
+        {
+
+            DestroyImmediate(childen[i]);
+
+        }
+
+        childen.Clear();
 
     }
 
