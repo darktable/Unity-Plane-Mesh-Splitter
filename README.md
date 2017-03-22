@@ -8,7 +8,7 @@ A simple script which let's you split any mesh into smaller chunks. At first it 
 - UVs and Normals work.
 - Doesn't modify the existing mesh.
 
-![alt tag](http://i.imgur.com/86I7Apw.png)
+![alt tag](http://i.imgur.com/5PzoVFc.jpg)
 
 # Installation
 Drag the folder containing MeshSplit.cs and Editor folder to your Assets folder.
