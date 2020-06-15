@@ -8,6 +8,8 @@ A simple script which lets you split any mesh into smaller submeshes. At first i
 - Customization:
   - Grid size
   - Multiple axes (in any combination)
+  - Ability to generate colliders
+  - ...
 - Supports all vertex data:
   - Normals
   - Colors
