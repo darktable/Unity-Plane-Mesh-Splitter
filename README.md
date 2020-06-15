@@ -1,20 +1,37 @@
 # Unity Plane Mesh Splitter
-A simple script which let's you split any mesh into smaller chunks. At first it was designed to work with imported Tiled2Unity terrains, but I rewrote it to work with everything you can throw at it. This is my very first public project ever.
+
+A simple script which lets you split any mesh into smaller submeshes. At first it was designed to work with imported Tiled2Unity terrains, but I rewrote it to work with everything you can throw at it.
 
 # Features
-- Very simple.
-- Customizable grid size.
-- You can choose which axes you want to use. Any combination should work.
-- UVs and Normals work.
+
+- Simple and fairly fast.
+- Customization:
+  - Grid size
+  - Multiple axes (in any combination)
+- Supports all vertex data:
+  - Normals
+  - Colors
+  - Multiple uv channels
 - Doesn't modify the existing mesh.
+- Can be used both in editor and at runtime.
 
 ![alt tag](http://i.imgur.com/5PzoVFc.jpg)
 
-# Installation
-Drag the folder containing MeshSplit.cs and Editor folder to your Assets folder.
+# Usage - MeshSplitController component
 
-# Usage
-Put the "Mesh Split" component on the game object you want to split and press the "Split" button. Press "Clear" to revert.
+Put the "MeshSplitController" component on the game object you want to split and press the "Create submeshes" button. Press "Clear submeshes" to revert.
 
-Requirements:
-- Mesh Filter component
+# Usage - API
+
+Mesh mesh; // your mesh
+            
+// create a mesh splitter with some parameters (see MeshSplitParameters.cs for default settings)
+var meshSplitter = new MeshSplitter(new MeshSplitParameters
+{
+    GridSize = 32,
+    GenerateColliders = true
+});
+
+// create submeshes assigned to points
+var subMeshes = meshSplitter.Split(mesh);
+
