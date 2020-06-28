@@ -24,6 +24,12 @@ Say you have a gigantic terrain in a single mesh. Unity is going to process the 
 
 ![alt tag](http://i.imgur.com/5PzoVFc.jpg)
 
+# Installation
+
+You have two options
+- Download the .unitypackage from 'releases' section and import it in Unity.
+- Clone this repository and put the scripts into your assets folder.
+
 # Usage - MeshSplitController component
 
 Put the "MeshSplitController" component on the game object you want to split and press the "Create submeshes" button. Press "Clear submeshes" to revert.
