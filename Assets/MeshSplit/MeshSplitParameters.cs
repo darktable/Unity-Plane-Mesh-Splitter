@@ -3,7 +3,7 @@
 using System;
 using UnityEngine;
 
-namespace Assets.MeshSplit
+namespace MeshSplit
 {
     [Serializable]
     public class MeshSplitParameters

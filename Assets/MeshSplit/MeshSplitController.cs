@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Assets.MeshSplit
+namespace MeshSplit
 {
     public class MeshSplitController : MonoBehaviour
     {

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Assets.MeshSplit
+namespace MeshSplit
 {
     public class MeshSplitter
     {

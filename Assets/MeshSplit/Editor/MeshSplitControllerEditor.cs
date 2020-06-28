@@ -3,7 +3,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Assets.MeshSplit.Editor
+namespace MeshSplit.Editor
 {
     [CustomEditor(typeof(MeshSplitController))]
     public class MeshSplitControllerEditor : UnityEditor.Editor
