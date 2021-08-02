@@ -38,19 +38,17 @@ Put the "MeshSplitController" component on the game object you want to split and
 
 # Usage - API
 
-// your mesh
-
+```csharp
+// mesh to split
 Mesh mesh;
             
 // create a mesh splitter with some parameters (see MeshSplitParameters.cs for default settings)
-
 var meshSplitter = new MeshSplitter(new MeshSplitParameters
 {
     GridSize = 32,
     GenerateColliders = true
 });
 
-// create submeshes assigned to points
-
+// split mesh into submeshes assigned to points
 var subMeshes = meshSplitter.Split(mesh);
-
+```
