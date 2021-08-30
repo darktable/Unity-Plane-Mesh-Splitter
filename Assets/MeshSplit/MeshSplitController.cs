@@ -2,7 +2,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace MeshSplit
 {
@@ -16,7 +18,7 @@ namespace MeshSplit
 
         // generated children are kept here, so the script knows what to delete on Split() or Clear()
         [HideInInspector] [SerializeField]
-        private List<GameObject> _children;
+        private List<GameObject> Children = new();
 
         public void Split()
         {
@@ -42,18 +44,27 @@ namespace MeshSplit
             {
                 _baseRenderer.enabled = false;
             }
+            
+            CreateSubmeshes();
+        }
 
+        private void CreateSubmeshes()
+        {
             var meshSplitter = new MeshSplitter(Parameters);
             var subMeshes = meshSplitter.Split(_baseMesh);
-                
-            _children = new List<GameObject>();
+            
+            if (Children == null)
+            {
+                Children = new List<GameObject>();
+            }
+
             foreach (var subMesh in subMeshes)
             {
-                CreateChild(subMesh);
+                CreateSubmesh(subMesh);
             }
         }
 
-        private void CreateChild((Vector3Int gridPoint, Mesh mesh) subMesh)
+        private void CreateSubmesh((Vector3Int gridPoint, Mesh mesh) subMesh)
         {
             var newGameObject = new GameObject
             {
@@ -90,12 +101,12 @@ namespace MeshSplit
                 meshCollider.sharedMesh = subMesh.mesh;
             }
             
-            _children.Add(newGameObject);
+            Children.Add(newGameObject);
         }
 
         private int GetUsedAxisCount()
         {
-            return (Parameters.SplitAxisX ? 1 : 0) + (Parameters.SplitAxisY ? 1 : 0) + (Parameters.SplitAxisZ ? 1 : 0);
+            return (Parameters.SplitAxes.x ? 1 : 0) + (Parameters.SplitAxes.y ? 1 : 0) + (Parameters.SplitAxes.z ? 1 : 0);
         }
 
         public void Clear()
@@ -111,15 +122,23 @@ namespace MeshSplit
 
         private void DestroyChildren()
         {
-            if (_children == null) return;
-            
-            foreach (var t in _children)
+            // find child submeshes which are not in child list
+            var unassignedSubMeshes = GetComponentsInChildren<MeshRenderer>()
+                .Where(child => child.name.Contains("SubMesh") && !Children.Contains(child.gameObject));
+
+            foreach (var subMesh in unassignedSubMeshes)
             {
+                Children.Add(subMesh.gameObject);
+            }
+
+            foreach (var t in Children)
+            {
+                // destroy mesh
                 DestroyImmediate(t.GetComponent<MeshFilter>().sharedMesh);
                 DestroyImmediate(t);
             }
 
-            _children.Clear();
+            Children.Clear();
         }
 
         private void OnDrawGizmosSelected()

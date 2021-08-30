@@ -1,6 +1,7 @@
 ﻿/* https://github.com/artnas/Unity-Plane-Mesh-Splitter */
 
 using System;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace MeshSplit
@@ -10,20 +11,16 @@ namespace MeshSplit
     {
         [Range(0.1f, 64)]
         public float GridSize = 16;
-
-        [Header("Axes.")]
-        public bool SplitAxisX = true;
-        public bool SplitAxisY = true;
-        public bool SplitAxisZ = true;
+        public bool3 SplitAxes = new(true, true, true);
 
         [Header("Parent attributes.")]
         public bool UseParentLayer = true;
         public bool UseParentStaticFlag = true;
         public bool UseParentMeshRendererSettings = true;
 
-        [Header("Vertex data.")]
-        public bool UseVertexNormals;
-        public bool UseVertexColors;
+        [Header("Vertex data.")] 
+        public bool UseVertexNormals = true;
+        public bool UseVertexColors = true;
         
         [Header("Amount of uv channels to use.")]
         [Range(0, 8)]

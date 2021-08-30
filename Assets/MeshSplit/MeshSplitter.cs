@@ -80,9 +80,9 @@ namespace MeshSplit
                 // calculate coordinates of the closest grid node.
                 // ignore an axis (set it to 0) if its not enabled
                 var gridPos = new Vector3Int(
-                    _parameters.SplitAxisX ? Mathf.RoundToInt(Mathf.Round(currentPoint.x / _parameters.GridSize) * _parameters.GridSize) : 0,
-                    _parameters.SplitAxisY ? Mathf.RoundToInt(Mathf.Round(currentPoint.y / _parameters.GridSize) * _parameters.GridSize) : 0,
-                    _parameters.SplitAxisZ ? Mathf.RoundToInt(Mathf.Round(currentPoint.z / _parameters.GridSize) * _parameters.GridSize) : 0
+                    _parameters.SplitAxes.x ? Mathf.RoundToInt(Mathf.Round(currentPoint.x / _parameters.GridSize) * _parameters.GridSize) : 0,
+                    _parameters.SplitAxes.y ? Mathf.RoundToInt(Mathf.Round(currentPoint.y / _parameters.GridSize) * _parameters.GridSize) : 0,
+                    _parameters.SplitAxes.z ? Mathf.RoundToInt(Mathf.Round(currentPoint.z / _parameters.GridSize) * _parameters.GridSize) : 0
                 );
 
                 // check if the dictionary has a key (our grid position). Add it / create a list for it if it doesnt.
