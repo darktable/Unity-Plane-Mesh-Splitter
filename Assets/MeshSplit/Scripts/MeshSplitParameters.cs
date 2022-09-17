@@ -4,12 +4,12 @@ using System;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace MeshSplit
+namespace MeshSplit.Scripts
 {
     [Serializable]
     public class MeshSplitParameters
     {
-        [Range(0.1f, 64)]
+        [Range(0.1f, 256)]
         public float GridSize = 16;
         public bool3 SplitAxes = new(true, true, true);
 

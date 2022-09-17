@@ -4,14 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace MeshSplit
+namespace MeshSplit.Scripts
 {
     public class MeshSplitController : MonoBehaviour
     {
         public MeshSplitParameters Parameters;
-        public bool DrawGridGizmosWhenSelected = false;
+        public bool DrawGridGizmosWhenSelected;
 
         private Mesh _baseMesh;
         private MeshRenderer _baseRenderer;
@@ -45,30 +44,26 @@ namespace MeshSplit
                 _baseRenderer.enabled = false;
             }
             
-            CreateSubmeshes();
+            CreateChildren();
         }
 
-        private void CreateSubmeshes()
+        private void CreateChildren()
         {
             var meshSplitter = new MeshSplitter(Parameters);
-            var subMeshes = meshSplitter.Split(_baseMesh);
-            
-            if (Children == null)
-            {
-                Children = new List<GameObject>();
-            }
+            var subMeshData = meshSplitter.Split(_baseMesh);
 
-            foreach (var subMesh in subMeshes)
+            foreach (var (gridPoint, mesh) in subMeshData)
             {
-                CreateSubmesh(subMesh);
+                if (mesh.vertexCount > 0)
+                    CreateChild(gridPoint, mesh);
             }
         }
 
-        private void CreateSubmesh((Vector3Int gridPoint, Mesh mesh) subMesh)
+        private void CreateChild(Vector3Int gridPoint, Mesh mesh)
         {
             var newGameObject = new GameObject
             {
-                name = "SubMesh " + subMesh.gridPoint
+                name = $"SubMesh {gridPoint}"
             };
         
             newGameObject.transform.SetParent(transform, false);
@@ -83,7 +78,7 @@ namespace MeshSplit
             
             // assign the new mesh to this submeshes mesh filter
             var newMeshFilter = newGameObject.AddComponent<MeshFilter>();
-            newMeshFilter.sharedMesh = subMesh.mesh;
+            newMeshFilter.sharedMesh = mesh;
 
             var newMeshRenderer = newGameObject.AddComponent<MeshRenderer>();
             if (Parameters.UseParentMeshRendererSettings && _baseRenderer)
@@ -98,7 +93,7 @@ namespace MeshSplit
             {
                 var meshCollider = newGameObject.AddComponent<MeshCollider>();
                 meshCollider.convex = Parameters.UseConvexColliders;
-                meshCollider.sharedMesh = subMesh.mesh;
+                meshCollider.sharedMesh = mesh;
             }
             
             Children.Add(newGameObject);

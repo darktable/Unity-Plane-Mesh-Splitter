@@ -1,5 +1,6 @@
 ﻿/* https://github.com/artnas/Unity-Plane-Mesh-Splitter */
 
+using MeshSplit.Scripts;
 using UnityEditor;
 using UnityEngine;
 
