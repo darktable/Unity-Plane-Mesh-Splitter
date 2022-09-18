@@ -22,9 +22,11 @@ Say you have a gigantic terrain in a single mesh. Unity is going to process the 
   - Grid size
   - Multiple axes (in any combination)
   - Generate convex/non convex colliders
-- Very fast thanks to parallelized burst compiled code and memcpy. 
-  - Maintains exact original mesh vertex data format
-  - Automatic 16/32 bit indexing based on vertex count
+- Nice performance
+  - Parallelized burst code
+  - Pointers and memcpy
+- Maintains exact original mesh vertex data format
+- Automatic 16/32 bit indexing based on vertex count
 - Doesn't modify the existing mesh.
 - Can be used both in editor and at runtime.
 - Submeshes persist when saving the scene.
