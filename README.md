@@ -4,7 +4,7 @@
 
 A simple tool which lets you split any mesh into smaller submeshes. At first it was designed to work with imported Tiled2Unity terrains, but I rewrote it to work with everything you can throw at it. 
 
-In 2022 I rewrote it again to improve it and solve some problems. I used the new mesh building API and simplified the vertex data copying process - it now copies data directly from meshes GraphicsBuffer retaining the same vertex data structure as the original mesh. Usage of burst compiler allowed me to greatly improve performance and spread work across multiple threads.
+In 2022 I rewrote it again to improve it and solve some problems. I used the new mesh building API and simplified the vertex data copying process - it now copies data directly from the meshes GraphicsBuffer, retaining the same vertex data structure as the original mesh. Usage of burst compiler allowed me to greatly improve performance and spread work across multiple threads.
 
 ### What is the purpose of this tool?
 
