@@ -1,7 +1,6 @@
 # Unity Plane Mesh Splitter
 
 #### [Unity package](https://github.com/artnas/Unity-Plane-Mesh-Splitter/releases) now available.
-Version 1.1 was made in Unity 2021.3.10 using the new mesh API and C#9, so in case you encounter a problem, you can try the old version.
 
 A simple tool which lets you split any mesh into smaller submeshes. At first it was designed to work with imported Tiled2Unity terrains, but I rewrote it to work with everything you can throw at it. 
 
@@ -10,6 +9,11 @@ In 2022 I rewrote it again to work much faster thanks to parallel burst compiled
 ### What is the purpose of this tool?
 
 Say you have a gigantic terrain in a single mesh. Unity is going to process the entire mesh when rendering it even though only a small section in front of the camera is visible. This tool lets your split this large mesh into smaller submeshes which should greatly improve the performance thanks to the built-in Unity frustum culling (only visible meshes will be rendered).
+
+### Compability
+
+- Version 1.0 is compatible with older versions of Unity
+- Version 1.1 was made in Unity 2021.3 using the new mesh API and C#9, so in case you encounter a problem, you can try the old version.
 
 ### Features
 
