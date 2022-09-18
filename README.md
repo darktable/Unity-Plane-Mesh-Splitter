@@ -2,7 +2,9 @@
 
 #### [Unity package](https://github.com/artnas/Unity-Plane-Mesh-Splitter/releases) now available.
 
-A simple tool which lets you split any mesh into smaller submeshes. At first it was designed to work with imported Tiled2Unity terrains, but I rewrote it to work with everything you can throw at it.
+A simple tool which lets you split any mesh into smaller submeshes. At first it was designed to work with imported Tiled2Unity terrains, but I rewrote it to work with everything you can throw at it. 
+
+In 2022 I rewrote it again to work much faster, thanks to parallel burst compiled code. It also uses the exact vertex data format as the original mesh to prevent discrepancies.
 
 ### What is the purpose of this tool?
 
@@ -10,16 +12,13 @@ Say you have a gigantic terrain in a single mesh. Unity is going to process the 
 
 ### Features
 
-- Simple and fairly fast.
+- Simple and very fast thanks to burst compiled code.
 - Customization:
   - Grid size
   - Multiple axes (in any combination)
   - Ability to generate colliders
-  - ...
-- Supports all vertex data:
-  - Normals
-  - Colors
-  - Multiple uv channels
+- Keeps original mesh vertex data format
+  - Automatically uses 16 or 32 bit indexing based on vertex count 
 - Doesn't modify the existing mesh.
 - Can be used both in editor and at runtime.
 - Submeshes persist when saving the scene.
