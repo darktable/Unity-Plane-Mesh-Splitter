@@ -34,7 +34,7 @@ You have two options
 
 # Usage - MeshSplitController component
 
-Put the "MeshSplitController" component on the game object you want to split and press the "Create submeshes" button. Press "Clear submeshes" to revert.
+Add the "MeshSplitController" component to the game object you want to split and press the "Create submeshes" button. Press "Clear submeshes" to revert.
 
 # Usage - API
 
