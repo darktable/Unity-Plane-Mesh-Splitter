@@ -39,13 +39,12 @@ namespace MeshSplit.Scripts
             {
                 throw new Exception("MeshFilter component is required.");
             }
-            
-            _baseRenderer = GetComponent<MeshRenderer>();
-            if (_baseRenderer)
+
+            if (_baseRenderer || TryGetComponent(out _baseRenderer))
             {
                 _baseRenderer.enabled = false;
             }
-            
+
             CreateChildren();
         }
 
@@ -109,11 +108,11 @@ namespace MeshSplit.Scripts
         public void Clear()
         {
             DestroyChildren();
-
-            var meshRenderer = GetComponent<MeshRenderer>();
-            if (meshRenderer)
+            
+            // reenable renderer
+            if (_baseRenderer || TryGetComponent(out _baseRenderer))
             {
-                meshRenderer.enabled = true;
+                _baseRenderer.enabled = true;
             }
         }
 
@@ -140,25 +139,54 @@ namespace MeshSplit.Scripts
 
         private void OnDrawGizmosSelected()
         {
-            var meshFilter = GetComponent<MeshFilter>();
-            if (!DrawGridGizmosWhenSelected || !meshFilter || !meshFilter.sharedMesh) 
+            if (!DrawGridGizmosWhenSelected || !TryGetComponent<MeshFilter>(out var meshFilter) || !meshFilter.sharedMesh || !TryGetComponent<Renderer>(out _))
                 return;
-            
+
+            var t = transform;
             var bounds = meshFilter.sharedMesh.bounds;
 
-            var xSize = Mathf.Ceil(bounds.extents.x) + Parameters.GridSize;
-            var ySize = Mathf.Ceil(bounds.extents.y) + Parameters.GridSize;
-            var zSize = Mathf.Ceil(bounds.extents.z) + Parameters.GridSize;
+            var xSize = Parameters.SplitAxes.x ? Mathf.Ceil(bounds.extents.x) : Parameters.GridSize / 2f;
+            var ySize = Parameters.SplitAxes.y ? Mathf.Ceil(bounds.extents.y) : Parameters.GridSize / 2f;
+            var zSize = Parameters.SplitAxes.z ? Mathf.Ceil(bounds.extents.z) : Parameters.GridSize / 2f;
 
-            for (var z = -zSize; z <= zSize; z += Parameters.GridSize)
+            var center = bounds.center;
+            
+            // TODO improve grid alignment
+
+            Gizmos.color = new Color(1, 1, 1, 0.3f);
+            
+            /* credit for this line drawing code goes to https://github.com/STARasGAMES */
+
+            // X aligned lines
+            for (var y = -ySize; y <= ySize; y += Parameters.GridSize)
             {
-                for (var y = -ySize; y <= ySize; y += Parameters.GridSize)
+                for (var z = -zSize; z <= zSize; z += Parameters.GridSize)
                 {
-                    for (var x = -xSize; x <= xSize; x += Parameters.GridSize)
-                    {
-                        var position = transform.position + new Vector3(x, y, z);
-                        Gizmos.DrawWireCube(position, Parameters.GridSize * transform.localScale);
-                    }
+                    var start = t.TransformPoint(center + new Vector3(-xSize, y, z));
+                    var end = t.TransformPoint(center + new Vector3(xSize, y, z));
+                    Gizmos.DrawLine(start, end);
+                }
+            }
+
+            // Y aligned lines
+            for (var x = -xSize; x <= xSize; x += Parameters.GridSize)
+            {
+                for (var z = -zSize; z <= zSize; z += Parameters.GridSize)
+                {
+                    var start = t.TransformPoint(center + new Vector3(x, -ySize, z));
+                    var end = t.TransformPoint(center + new Vector3(x, ySize, z));
+                    Gizmos.DrawLine(start, end);
+                }
+            }
+            
+            // Z aligned lines
+            for (var y = -ySize; y <= ySize + 1; y += Parameters.GridSize)
+            {
+                for (var x = -xSize; x <= xSize + 1; x += Parameters.GridSize)
+                {
+                    var start = t.TransformPoint(center + new Vector3(x, y, -zSize));
+                    var end = t.TransformPoint(center + new Vector3(x, y, zSize));
+                    Gizmos.DrawLine(start, end);
                 }
             }
         }
