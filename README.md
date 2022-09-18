@@ -1,6 +1,7 @@
 # Unity Plane Mesh Splitter
 
 #### [Unity package](https://github.com/artnas/Unity-Plane-Mesh-Splitter/releases) now available.
+Version 1.1 was built in Unity 2021.3.10, so in case you encounter a problem you can try the old version.
 
 A simple tool which lets you split any mesh into smaller submeshes. At first it was designed to work with imported Tiled2Unity terrains, but I rewrote it to work with everything you can throw at it. 
 
