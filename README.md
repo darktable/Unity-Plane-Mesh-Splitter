@@ -1,7 +1,7 @@
 # Unity Plane Mesh Splitter
 
 #### [Unity package](https://github.com/artnas/Unity-Plane-Mesh-Splitter/releases) now available.
-Version 1.1 was built in Unity 2021.3.10, so in case you encounter a problem you can try the old version.
+Version 1.1 was made in Unity 2021.3.10 using the new mesh API and C#9, so in case you encounter a problem, you can try the old version.
 
 A simple tool which lets you split any mesh into smaller submeshes. At first it was designed to work with imported Tiled2Unity terrains, but I rewrote it to work with everything you can throw at it. 
 
@@ -13,14 +13,14 @@ Say you have a gigantic terrain in a single mesh. Unity is going to process the 
 
 ### Features
 
-- Simple and very fast thanks to burst compiled code.
+- Simple to use
 - Customization:
   - Grid size
   - Multiple axes (in any combination)
-  - Ability to generate colliders
-- Keeps original mesh vertex data attributes
-  - Automatically uses 16 or 32 bit indexing based on vertex count
-  - Copies data from the original mesh buffer using memcpy
+  - Generate convex/non convex colliders
+- Very fast thanks to parallelized burst compiled code and memcpy. 
+  - Maintains exact original mesh vertex data format
+  - Automatic 16/32 bit indexing based on vertex count
 - Doesn't modify the existing mesh.
 - Can be used both in editor and at runtime.
 - Submeshes persist when saving the scene.
