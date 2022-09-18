@@ -9,6 +9,8 @@ namespace MeshSplit.Scripts
 {
     public class MeshSplitController : MonoBehaviour
     {
+        public bool Verbose;
+        
         public MeshSplitParameters Parameters;
         public bool DrawGridGizmosWhenSelected;
 
@@ -49,7 +51,7 @@ namespace MeshSplit.Scripts
 
         private void CreateChildren()
         {
-            var meshSplitter = new MeshSplitter(Parameters);
+            var meshSplitter = new MeshSplitter(Parameters, Verbose);
             var subMeshData = meshSplitter.Split(_baseMesh);
 
             foreach (var (gridPoint, mesh) in subMeshData)

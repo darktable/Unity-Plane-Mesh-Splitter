@@ -18,14 +18,6 @@ namespace MeshSplit.Scripts
         public bool UseParentStaticFlag = true;
         public bool UseParentMeshRendererSettings = true;
 
-        [Header("Vertex data.")] 
-        public bool UseVertexNormals = true;
-        public bool UseVertexColors = true;
-        
-        [Header("Amount of uv channels to use.")]
-        [Range(0, 8)]
-        public int UvChannels = 1;
-
         [Header("Collisions.")] 
         public bool GenerateColliders;
         public bool UseConvexColliders;
