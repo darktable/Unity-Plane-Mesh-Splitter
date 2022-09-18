@@ -52,3 +52,7 @@ var meshSplitter = new MeshSplitter(new MeshSplitParameters
 // split mesh into submeshes assigned to points
 var subMeshes = meshSplitter.Split(mesh);
 ```
+
+# TODO
+
+- Support for submeshes with various materials
