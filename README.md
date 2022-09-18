@@ -12,8 +12,8 @@ Say you have a gigantic terrain in a single mesh. Unity is going to process the 
 
 ### Compability
 
-- Version 1.0 is compatible with older versions of Unity
-- Version 1.1 was made in Unity 2021.3 using the new mesh API and C#9, so in case you encounter a problem, you can try the old version.
+- Version 1.0 is compatible with older versions of Unity.
+- Version 1.1 was made in Unity 2021.3 and uses the new mesh API and C#9.
 
 ### Features
 
@@ -36,6 +36,11 @@ Say you have a gigantic terrain in a single mesh. Unity is going to process the 
 You have two options
 - Download the .unitypackage from 'releases' section and import it in Unity.
 - Clone this repository and put the scripts into your assets folder.
+
+Version 1.1 needs you to install the following packages using the unity package manager:
+- unity.mathematics
+- unity.burst
+- unity.collections
 
 # Usage - MeshSplitController component
 
