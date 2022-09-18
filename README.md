@@ -56,3 +56,4 @@ var subMeshes = meshSplitter.Split(mesh);
 # TODO
 
 - Support for submeshes with various materials
+- Align the gizmo grid with split planes
