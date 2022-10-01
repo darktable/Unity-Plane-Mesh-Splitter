@@ -88,6 +88,14 @@ namespace MeshSplit.Scripts
                 newMeshRenderer.sortingOrder = _baseRenderer.sortingOrder;
                 newMeshRenderer.sortingLayerID = _baseRenderer.sortingLayerID;
                 newMeshRenderer.shadowCastingMode = _baseRenderer.shadowCastingMode;
+                newMeshRenderer.receiveShadows = _baseRenderer.receiveShadows;
+                newMeshRenderer.receiveGI = _baseRenderer.receiveGI;
+                newMeshRenderer.lightProbeUsage = _baseRenderer.lightProbeUsage;
+                newMeshRenderer.rayTracingMode = _baseRenderer.rayTracingMode;
+                newMeshRenderer.reflectionProbeUsage = _baseRenderer.reflectionProbeUsage;
+                newMeshRenderer.staticShadowCaster = _baseRenderer.staticShadowCaster;
+                newMeshRenderer.motionVectorGenerationMode = _baseRenderer.motionVectorGenerationMode;
+                newMeshRenderer.allowOcclusionWhenDynamic = _baseRenderer.allowOcclusionWhenDynamic;
             }
 
             if (Parameters.GenerateColliders)
