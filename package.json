@@ -1,0 +1,19 @@
+{
+  "name": "com.artnas.mesh-splitter",
+  "displayName": "Mesh Splitter",
+  "version": "0.9.0",
+  "unity": "2021.3",
+  "description": "A simple tool which lets you split any mesh into smaller submeshes. At first it was designed to work with imported Tiled2Unity terrains, but I rewrote it to work with everything you can throw at it.",
+  "samples": [],
+  "author": {
+    "name": "Artur Nasiadko",
+    "email": "",
+    "url": "https://github.com/artnas/Unity-Plane-Mesh-Splitter"
+  },
+  "type": "tool",
+  "dependencies": {
+    "com.unity.collections": "1.2.4",
+    "com.unity.mathematics": "1.2.6",
+    "com.unity.burst": "1.6.6"
+  }
+}
