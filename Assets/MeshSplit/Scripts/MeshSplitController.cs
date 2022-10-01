@@ -52,6 +52,22 @@ namespace MeshSplit.Scripts
         {
             var meshSplitter = new MeshSplitter(Parameters, Verbose);
             var subMeshData = meshSplitter.Split(_baseMesh);
+            
+            // sort the children
+            subMeshData.Sort(delegate((Vector3Int gridPoint, Mesh mesh) a, (Vector3Int gridPoint, Mesh mesh) b)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    var compare = a.gridPoint[i].CompareTo(b.gridPoint[i]);
+
+                    if (compare != 0)
+                    {
+                        return compare;
+                    }
+                }
+
+                return 0;
+            });
 
             foreach (var (gridPoint, mesh) in subMeshData)
             {
