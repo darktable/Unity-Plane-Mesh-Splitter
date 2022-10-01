@@ -95,6 +95,7 @@ namespace MeshSplit.Scripts
             
             // assign the new mesh to this submeshes mesh filter
             var newMeshFilter = newGameObject.AddComponent<MeshFilter>();
+            mesh.UploadMeshData(true);
             newMeshFilter.sharedMesh = mesh;
 
             var newMeshRenderer = newGameObject.AddComponent<MeshRenderer>();
