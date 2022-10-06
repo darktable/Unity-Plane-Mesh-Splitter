@@ -8,9 +8,7 @@ In 2022 I rewrote it again to improve it and solve some problems. I used the new
 
 ### What is the purpose of this tool?
 
-Say you have a gigantic terrain in a single mesh. Unity is going to process the entire mesh when rendering it even though only a small section in front of the camera is visible. 
-
-This tool lets your split this large mesh into smaller submeshes which should greatly improve the performance thanks to the built-in Unity frustum culling (only visible meshes will be rendered).
+Say you have a gigantic terrain in a single mesh. Unity is going to process the entire mesh when rendering it even though only a small section in front of the camera is visible. This tool lets your split this large mesh into smaller submeshes which should greatly improve the performance thanks to the built-in Unity frustum culling (only visible meshes will be rendered).
 
 ## Installation
 
